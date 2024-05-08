@@ -13,6 +13,9 @@ kubectl delete deployment/app-deployment
 # Remove Kubernetes services
 kubectl delete svc app-service
 
+# Remove all dangling Docker images
+docker image prune --force
+
 # Builds new images from their respective Dockerfiles
 cd kafka-producer-container || exit
 docker build --no-cache -qt kafka-producer .
