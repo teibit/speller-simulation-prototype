@@ -7,13 +7,13 @@ producer = KafkaProducer(
 	value_serializer=lambda x: x.to_bytes((x.bit_length() + 7) // 8, 'big')
 )
 
-message = randrange(100)
+number = randrange(5000)
 
-print(f'Sending {message} to Numbers...')
+print(f'Sending {number} to Numbers...')
 
 producer.send(
 	topic='Numbers',
-	value=message
+	value=number
 )
 
 producer.close()
