@@ -16,4 +16,13 @@ producer.send(
 	value=number
 )
 
+number = randrange(80)
+
+print(f'Sending {number} to Dots...')
+
+producer.send(
+	topic='Dots',
+	value=number
+)
+
 producer.close()
