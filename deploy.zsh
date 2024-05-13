@@ -4,24 +4,36 @@
 cd /Users/teibit/app || exit
 
 # Remove images from docker
-docker rmi -f kafka-producer:latest
-docker rmi -f kafka-consumer:latest
+docker rmi -f raw-topics-producer
+docker rmi -f numbers-processor-consumer-producer
+docker rmi -f dots-processor-consumer-producer
+docker rmi -f processed-topics-consumer
+docker rmi -f numeralia-db-manager
 
-# Remove Kubernetes deployments
+# Remove Kubernetes deployment
 kubectl delete deployment/app-deployment
 
-# Remove Kubernetes services
+# Remove Kubernetes service
 kubectl delete svc app-service
 
 # Remove all dangling Docker images
 docker image prune --force
 
 # Builds new images from their respective Dockerfiles
-cd kafka-producer-container || exit
-docker build --no-cache -qt kafka-producer .
+cd raw-topics-producer-container || exit
+docker build --no-cache -qt raw-topics-producer .
 
-cd ../kafka-consumer-container || exit
-docker build --no-cache -qt kafka-consumer .
+cd ../numbers-processor-consumer-producer-container || exit
+docker build --no-cache -qt numbers-processor-consumer-producer .
+
+cd ../dots-processor-consumer-producer-container || exit
+docker build --no-cache -qt dots-processor-consumer-producer .
+
+cd ../processed-topics-consumer-container || exit
+docker build --no-cache -qt processed-topics-consumer .
+
+cd ../numeralia-db-manager-container || exit
+docker build --no-cache -qt numeralia-db-manager .
 
 cd .. || exit
 clear

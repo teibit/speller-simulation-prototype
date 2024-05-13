@@ -3,12 +3,13 @@ FROM python:3.9-slim
 
 MAINTAINER Ever Alfonso García Méndez
 
-WORKDIR kafka-consumer-container
+WORKDIR raw-topics-consumer-container
 
 COPY  . .
 
 RUN pip3 install -r requirements.txt
 
-EXPOSE 25
+EXPOSE 20
 
 ENTRYPOINT ["python3", "./src/app.py"]
+

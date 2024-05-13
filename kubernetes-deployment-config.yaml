@@ -45,16 +45,26 @@ spec:
         app: app-deployment
     spec:
       containers:
-      - name: kafka-producer-container
-        image: kafka-producer
+      - name: raw-topics-producer-container
+        image: raw-topics-producer
         imagePullPolicy: Never
         ports:
           - containerPort: 20
-      - name: kafka-consumer-container
-        image: kafka-consumer
+      - name: processed-topics-consumer-container
+        image: processed-topics-consumer
         imagePullPolicy: Never
         ports:
           - containerPort: 25
+      - name: numbers-processor-consumer-producer-container
+        image: numbers-processor-consumer-producer
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 26
+      - name: dots-processor-consumer-producer-container
+        image: dots-processor-consumer-producer
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 27
       - name: bitnami-kafka-broker-container
         image: bitnami/kafka
         imagePullPolicy: IfNotPresent
@@ -82,3 +92,40 @@ spec:
             containerPort: 9092
           - name: controller
             containerPort: 9094
+      - name: mysql-server-container
+        image: mysql
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MYSQL_DATABASE
+            value: Numeralia
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: '1'
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
+      - name: postgres-server-container
+        image: postgres
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: POSTGRES_DB
+            value: Numeralia
+          - name: POSTGRES_PASSWORD
+            value: 'postgres'
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: 'trust'
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: numeralia
+          - mountPath: docker-entrypoint-initdb.d/postgres-ini.sql
+            name: postgres-ini
+      - name: numeralia-db-manager-container
+        image: numeralia-db-manager
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 30
+      volumes:
+      - name: numeralia
+      - name: postgres-ini
+        hostPath:
+          path: /Users/teibit/app/postgres-ini.sql
+          type: File

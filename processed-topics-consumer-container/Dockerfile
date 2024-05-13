@@ -1,0 +1,14 @@
+# big size, no vulnerabilities, updated frequently
+FROM python:3.9-slim
+
+MAINTAINER Ever Alfonso García Méndez
+
+WORKDIR processed-topics-consumer-container
+
+COPY  . .
+
+RUN pip3 install -r requirements.txt
+
+EXPOSE 25
+
+ENTRYPOINT ["python3", "./src/app.py"]
