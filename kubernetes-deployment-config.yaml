@@ -65,6 +65,16 @@ spec:
         imagePullPolicy: Never
         ports:
           - containerPort: 27
+      - name: increasing-processor-consumer-producer-container
+        image: increasing-processor-consumer-producer
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 28
+      - name: binary-processor-consumer-producer-container
+        image: binary-processor-consumer-producer
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 29
       - name: bitnami-kafka-broker-container
         image: bitnami/kafka
         imagePullPolicy: IfNotPresent
@@ -118,6 +128,23 @@ spec:
             name: numeralia
           - mountPath: docker-entrypoint-initdb.d/postgres-ini.sql
             name: postgres-ini
+      - name: redis-server-container
+        image: redis
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
+      - name: mongo-server-container
+        image: mongo
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: 'admin'
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: 'admin'
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
       - name: numeralia-db-manager-container
         image: numeralia-db-manager
         imagePullPolicy: Never

@@ -1,12 +1,14 @@
 import mysql.connector
 import psycopg2
+import redis
+from pymongo import MongoClient
 
 mysql_db = mysql.connector.connect(
   host='localhost',
   user='root'
 )
 
-mysql_db_cursor = mysql_db.cursor()
+mysql_db_cursor = mysql_db.cursor(buffered=True)
 
 mysql_db_cursor.execute('CREATE DATABASE IF NOT EXISTS Numeralia;')
 
@@ -18,8 +20,6 @@ mysql_db_cursor.execute(
     'Spelling VARCHAR(255)'
   ');'
 )
-
-mysql_db_cursor.execute('DESCRIBE Numeralia.Records;')
 
 print('MySQL')
 
@@ -42,3 +42,24 @@ postgres_db_cursor.execute('SELECT * FROM Records;')
 
 for row in postgres_db_cursor.fetchall():
   print(row)
+
+r = redis.Redis()
+
+keys = r.keys()
+
+print('\nRedis')
+
+# Get all values associated with the keys
+for key in keys:
+  print(f'({key}, {r.get(key)})')
+
+r.close()
+
+client = MongoClient(username='admin', password='admin')
+
+db = client['Numeralia']
+collection = db['Records']
+
+print('\nMongoDB')
+for record in collection.find():
+  print(record)

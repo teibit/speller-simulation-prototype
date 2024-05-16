@@ -7,22 +7,40 @@ producer = KafkaProducer(
 	value_serializer=lambda x: x.to_bytes((x.bit_length() + 7) // 8, 'big')
 )
 
-number = randrange(5000)
+number_numbers = randrange(5000)
 
-print(f'Sending {number} to Numbers...')
+print(f'Sending {number_numbers} to Numbers...')
 
 producer.send(
 	topic='Numbers',
-	value=number
+	value=number_numbers
 )
 
-number = randrange(80)
+number_dots = randrange(80)
 
-print(f'Sending {number} to Dots...')
+print(f'Sending {number_dots} to Dots...')
 
 producer.send(
 	topic='Dots',
-	value=number
+	value=number_dots
+)
+
+number_increasing = randrange(10)
+
+print(f'Sending {number_increasing} to Increasing...')
+
+producer.send(
+	topic='Increasing',
+	value=number_increasing
+)
+
+number_binary = randrange(65000)
+
+print(f'Sending {number_binary} to Binary...')
+
+producer.send(
+	topic='Binary',
+	value=number_binary
 )
 
 producer.close()

@@ -3,7 +3,7 @@ FROM python:3.9-slim
 
 MAINTAINER Ever Alfonso García Méndez
 
-WORKDIR dots-processor-consumer-container
+WORKDIR dots-processor-consumer-producer-container
 
 COPY  . .
 

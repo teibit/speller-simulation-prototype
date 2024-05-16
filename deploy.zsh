@@ -7,6 +7,8 @@ cd /Users/teibit/app || exit
 docker rmi -f raw-topics-producer
 docker rmi -f numbers-processor-consumer-producer
 docker rmi -f dots-processor-consumer-producer
+docker rmi -f increasing-processor-consumer-producer
+docker rmi -f binary-processor-consumer-producer
 docker rmi -f processed-topics-consumer
 docker rmi -f numeralia-db-manager
 
@@ -28,6 +30,12 @@ docker build --no-cache -qt numbers-processor-consumer-producer .
 
 cd ../dots-processor-consumer-producer-container || exit
 docker build --no-cache -qt dots-processor-consumer-producer .
+
+cd ../increasing-processor-consumer-producer-container || exit
+docker build --no-cache -qt increasing-processor-consumer-producer .
+
+cd ../binary-processor-consumer-producer-container || exit
+docker build --no-cache -qt binary-processor-consumer-producer .
 
 cd ../processed-topics-consumer-container || exit
 docker build --no-cache -qt processed-topics-consumer .
