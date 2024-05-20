@@ -1,5 +1,7 @@
 import pickle
+import time
 
+from elasticsearch import Elasticsearch
 from kafka import KafkaConsumer, KafkaProducer, TopicPartition
 
 dots_consumer = KafkaConsumer(
@@ -8,6 +10,12 @@ dots_consumer = KafkaConsumer(
     max_poll_records=1,
     request_timeout_ms=11000,
     value_deserializer=lambda x: int.from_bytes(x, 'big')
+)
+
+es = Elasticsearch(
+	'https://localhost:9200',
+	basic_auth=('elastic', 'elastic'),
+	verify_certs=False
 )
 
 dots_consumer.assign([TopicPartition('Dots', 0)])
@@ -38,6 +46,16 @@ for TopicPartition, ConsumerRecord in (
             )
         )
 
+        es.index(
+            index='dots',
+            document={
+                'Number': message.value,
+                'When': time.time(),
+                'What': 'processed',
+            },
+        )
+
         dots_processed_producer.close()
 
 dots_consumer.close()
+es.close()

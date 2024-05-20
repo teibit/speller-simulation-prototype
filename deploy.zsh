@@ -11,6 +11,7 @@ docker rmi -f increasing-processor-consumer-producer
 docker rmi -f binary-processor-consumer-producer
 docker rmi -f processed-topics-consumer
 docker rmi -f numeralia-db-manager
+docker rmi -f elasticsearch-logs
 
 # Remove Kubernetes deployment
 kubectl delete deployment/app-deployment
@@ -43,15 +44,18 @@ docker build --no-cache -qt processed-topics-consumer .
 cd ../numeralia-db-manager-container || exit
 docker build --no-cache -qt numeralia-db-manager .
 
+cd ../elasticsearch-logs-container || exit
+docker build --no-cache -qt elasticsearch-logs .
+
 cd .. || exit
 clear
 
 # Start Kubernetes deployment
 kubectl create -f ./kubernetes-deployment-config.yaml
-sleep 30
+sleep 40
 echo ''
 
-# Show results
+# Show Kubernetes logs
 kubectl get deployment
 echo ''
 kubectl get services

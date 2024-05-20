@@ -1,11 +1,20 @@
 import pickle
+import time
 
 import mysql.connector
 import psycopg2
 import redis
+from elasticsearch import Elasticsearch
 
-from kafka import KafkaConsumer, TopicPartition
+from kafka import KafkaConsumer
+from kafka.structs import TopicPartition
 from pymongo import MongoClient
+
+es = Elasticsearch(
+	'https://localhost:9200',
+	basic_auth=('elastic', 'elastic'),
+	verify_certs=False
+)
 
 numbers_processed_consumer = KafkaConsumer(
     bootstrap_servers='localhost:9092',
@@ -15,9 +24,12 @@ numbers_processed_consumer = KafkaConsumer(
     value_deserializer=lambda x: pickle.loads(x)
 )
 
-numbers_processed_partition = TopicPartition('Numbers-Processed', 0)
-numbers_processed_consumer.assign([numbers_processed_partition])
-numbers_processed_consumer.position(numbers_processed_partition)
+try:
+    numbers_processed_partition = TopicPartition('Numbers-Processed', 0)
+    numbers_processed_consumer.assign([numbers_processed_partition])
+    numbers_processed_consumer.position(numbers_processed_partition)
+except Exception:
+    pass
 
 print('Waiting for messages via Numbers-Processed...')
 
@@ -49,6 +61,15 @@ for TopicPartition, ConsumerRecord in (
 
         mysql_db.commit()
 
+        es.index(
+            index='numbers',
+            document={
+                'Number': message.value[0],
+                'When': time.time(),
+                'What': 'archived',
+            },
+        )
+
 mysql_db.close()
 numbers_processed_consumer.close()
 
@@ -60,9 +81,12 @@ dots_processed_consumer = KafkaConsumer(
     value_deserializer=lambda x: pickle.loads(x)
 )
 
-dots_processed_partition = TopicPartition('Dots-Processed', 0)
-dots_processed_consumer.assign([dots_processed_partition])
-dots_processed_consumer.position(dots_processed_partition)
+try:
+    dots_processed_partition = TopicPartition('Dots-Processed', 0)
+    dots_processed_consumer.assign([dots_processed_partition])
+    dots_processed_consumer.position(dots_processed_partition)
+except Exception:
+    pass
 
 print('Waiting for messages via Dots-Processed...')
 
@@ -94,6 +118,15 @@ for TopicPartition, ConsumerRecord in (
 
         postgres_db.commit()
 
+        es.index(
+            index='dots',
+            document={
+                'Number': message.value[0],
+                'When': time.time(),
+                'What': 'archived',
+            },
+        )
+
 postgres_db.close()
 dots_processed_consumer.close()
 
@@ -105,9 +138,12 @@ increasing_processed_consumer = KafkaConsumer(
     value_deserializer=lambda x: pickle.loads(x)
 )
 
-increasing_processed_partition = TopicPartition('Increasing-Processed', 0)
-increasing_processed_consumer.assign([increasing_processed_partition])
-increasing_processed_consumer.position(increasing_processed_partition)
+try:
+    increasing_processed_partition = TopicPartition('Increasing-Processed', 0)
+    increasing_processed_consumer.assign([increasing_processed_partition])
+    increasing_processed_consumer.position(increasing_processed_partition)
+except Exception:
+    pass
 
 print('Waiting for messages via Increasing-Processed...')
 
@@ -125,6 +161,15 @@ for TopicPartition, ConsumerRecord in (
 
         r.set(message.value[0], str(message.value[1]))
 
+        es.index(
+            index='increasing',
+            document={
+                'Number': message.value[0],
+                'When': time.time(),
+                'What': 'archived',
+            },
+        )
+
 r.close()
 increasing_processed_consumer.close()
 
@@ -136,9 +181,12 @@ binary_processed_consumer = KafkaConsumer(
     value_deserializer=lambda x: pickle.loads(x)
 )
 
-binary_processed_partition = TopicPartition('Binary-Processed', 0)
-binary_processed_consumer.assign([binary_processed_partition])
-binary_processed_consumer.position(binary_processed_partition)
+try:
+    binary_processed_partition = TopicPartition('Binary-Processed', 0)
+    binary_processed_consumer.assign([binary_processed_partition])
+    binary_processed_consumer.position(binary_processed_partition)
+except Exception:
+    pass
 
 print('Waiting for messages via Binary-Processed...')
 
@@ -161,5 +209,16 @@ for TopicPartition, ConsumerRecord in (
             'Number': message.value[0],
             'Binary': message.value[1]
         })
+
+        es.index(
+            index='binary',
+            document={
+                'Number': message.value[0],
+                'When': time.time(),
+                'What': 'archived',
+            },
+        )
+
 client.close()
 binary_processed_consumer.close()
+es.close()

@@ -145,11 +145,29 @@ spec:
         volumeMounts:
           - mountPath: /Numeralia
             name: numeralia
+      - name: elasticsearch-server-container
+        image: elasticsearch:8.13.4
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: discovery.type
+            value: 'single-node'
+          - name: ELASTIC_USERNAME
+            value: 'elastic'
+          - name: ELASTIC_PASSWORD
+            value: 'elastic'
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
       - name: numeralia-db-manager-container
         image: numeralia-db-manager
         imagePullPolicy: Never
         ports:
           - containerPort: 30
+      - name: elasticsearch-logs-container
+        image: elasticsearch-logs
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 33
       volumes:
       - name: numeralia
       - name: postgres-ini
