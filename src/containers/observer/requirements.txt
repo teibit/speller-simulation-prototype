@@ -1,0 +1,7 @@
+kafka-python-ng
+mysql-connector-python
+psycopg2-binary
+redis
+pymongo
+elasticsearch
+retrying

@@ -1,0 +1,4 @@
+kafka-python-ng
+inflect
+elasticsearch
+retrying

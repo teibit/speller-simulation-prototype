@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simulation
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simulation
+  template:
+    metadata:
+      labels:
+        app: simulation
+    spec:
+      containers:
+      - name: kafka
+        image: bitnami/kafka:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: KAFKA_CFG_NODE_ID
+            value: '0'
+          - name: KAFKA_CFG_PROCESS_ROLES
+            value: controller,broker
+          - name: KAFKA_CFG_LISTENERS
+            value: INTERNAL://:9090,EXTERNAL://:9092,CONTROLLER://:9094
+          - name: KAFKA_ADVERTISED_LISTENERS
+            value: INTERNAL://app-service:9090,EXTERNAL://localhost:9092
+          - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+            value: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+          - name: KAFKA_INTER_BROKER_LISTENER_NAME
+            value: INTERNAL
+          - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+            value: CONTROLLER
+          - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+            value: 0@:9094
+      - name: elasticsearch
+        image: elasticsearch:8.13.4
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: discovery.type
+            value: 'single-node'
+          - name: ELASTIC_USERNAME
+            value: 'elastic'
+          - name: ELASTIC_PASSWORD
+            value: 'elastic'
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
+      - name: mysql
+        image: mysql:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MYSQL_DATABASE
+            value: Numeralia
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: '1'
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
+      - name: postgres
+        image: postgres:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: POSTGRES_DB
+            value: Numeralia
+          - name: POSTGRES_PASSWORD
+            value: 'postgres'
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: 'trust'
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: numeralia
+          - mountPath: docker-entrypoint-initdb.d/postgres-ini.sql
+            name: postgres-ini
+      - name: redis
+        image: redis:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
+      - name: mongo
+        image: mongo:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: 'admin'
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: 'admin'
+        volumeMounts:
+          - mountPath: /Numeralia
+            name: numeralia
+      - name: inputter
+        image: inputter
+        imagePullPolicy: Never
+      - name: speller
+        image: speller
+        imagePullPolicy: Never
+      - name: archiver
+        image: archiver
+        imagePullPolicy: Never
+      - name: observer-mysql
+        image: observer-mysql
+        imagePullPolicy: Never
+      - name: observer-postgres
+        image: observer-postgres
+        imagePullPolicy: Never
+      - name: observer-redis
+        image: observer-redis
+        imagePullPolicy: Never
+      - name: observer-mongo
+        image: observer-mongo
+        imagePullPolicy: Never
+      - name: benchmarker
+        image: benchmarker
+        imagePullPolicy: Never
+      volumes:
+      - name: numeralia
+      - name: postgres-ini
+        hostPath:
+          path: /Users/teibit/app/sql/postgres-ini.sql
+          type: File
