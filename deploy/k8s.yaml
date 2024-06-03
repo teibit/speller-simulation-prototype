@@ -96,8 +96,17 @@ spec:
       - name: speller
         image: speller
         imagePullPolicy: Never
-      - name: archiver
-        image: archiver
+      - name: archiver-mysql
+        image: archiver-mysql
+        imagePullPolicy: Never
+      - name: archiver-postgres
+        image: archiver-postgres
+        imagePullPolicy: Never
+      - name: archiver-redis
+        image: archiver-redis
+        imagePullPolicy: Never
+      - name: archiver-mongo
+        image: archiver-mongo
         imagePullPolicy: Never
       - name: observer-mysql
         image: observer-mysql

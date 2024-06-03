@@ -30,7 +30,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Command to run upon container creation.
 # Note: the -u flag allows for unbuffered stdout.
-ENTRYPOINT ["python3", "-u", "archiver.py"]
+ENTRYPOINT ["python3", "-u", "archiver.py", "Mongo"]
 
 # Ignore warnings.
 ENV PYTHONWARNINGS="ignore"

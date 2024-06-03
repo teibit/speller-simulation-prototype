@@ -23,7 +23,10 @@ docker rmi -f inputter
 
 docker rmi -f speller
 
-docker rmi -f archiver
+docker rmi -f archiver-mysql
+docker rmi -f archiver-postgres
+docker rmi -f archiver-redis
+docker rmi -f archiver-mongo
 
 docker rmi -f observer-mysql
 docker rmi -f observer-postgres

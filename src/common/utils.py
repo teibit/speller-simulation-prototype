@@ -77,7 +77,7 @@ def consume_int(
 
 
 def consume_processed(
-    topic: Literal['Numbers']
+    topic: str
 ) -> Tuple[int, str]:
     """Consume an output tuple from a Processed topic.
 

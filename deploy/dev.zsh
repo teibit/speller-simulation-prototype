@@ -16,7 +16,10 @@ docker rmi -f inputter
 
 docker rmi -f speller
 
-docker rmi -f archiver
+docker rmi -f archiver-mysql
+docker rmi -f archiver-postgres
+docker rmi -f archiver-redis
+docker rmi -f archiver-mongo
 
 docker rmi -f observer-mysql
 docker rmi -f observer-postgres
@@ -39,7 +42,10 @@ docker build --no-cache -qt inputter -f src/containers/inputter/Dockerfile .
 
 docker build --no-cache -qt speller -f src/containers/speller/Dockerfile .
 
-docker build --no-cache -qt archiver -f src/containers/archiver/Dockerfile .
+docker build --no-cache -qt archiver-mysql -f src/containers/archiver/MySQL.Dockerfile .
+docker build --no-cache -qt archiver-postgres -f src/containers/archiver/Postgres.Dockerfile .
+docker build --no-cache -qt archiver-redis -f src/containers/archiver/Redis.Dockerfile .
+docker build --no-cache -qt archiver-mongo -f src/containers/archiver/Mongo.Dockerfile .
 
 docker build --no-cache -qt observer-mysql -f src/containers/observer/MySQL.Dockerfile .
 docker build --no-cache -qt observer-postgres -f src/containers/observer/Postgres.Dockerfile .
