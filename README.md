@@ -30,7 +30,7 @@ A careful selection of state-of-the-art software technologies make this simulati
 
 ### Pipeline
 
-![system](app/app.jpg?raw=true "System Overview")
+![system](app.jpg?raw=true "System Overview")
 
 The simulation runs the following time-coordinated steps:
 
